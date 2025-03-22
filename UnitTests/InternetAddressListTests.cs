@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2024 .NET Foundation and Contributors
+// Copyright (c) 2013-2025 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -895,6 +895,31 @@ namespace UnitTests {
 			var expected = new InternetAddressList {
 				new MailboxAddress ("", "third@example.net"),
 				new MailboxAddress ("", "fourth@example.net")
+			};
+
+			AssertParseAndTryParse (text, encoded, expected);
+		}
+
+		[Test]
+		[Ignore ("Address parser consumes the entire string as an unterminated comment")]
+		public void TestParseMailboxWithUnbalancedOpenParenthesis ()
+		{
+			const string text = "(Testing <fran@example.com>";
+			const string encoded = "Testing <fran@example.com>";
+			var expected = new InternetAddressList {
+				new MailboxAddress ("Testing", "fran@example.com")
+			};
+
+			AssertParseAndTryParse (text, encoded, expected);
+		}
+
+		[Test]
+		public void TestParseMailboxWithUnbalancedClosedParenthesis ()
+		{
+			const string text = "Testing) <sam@example.com>";
+			const string encoded = "\"Testing)\" <sam@example.com>";
+			var expected = new InternetAddressList {
+				new MailboxAddress ("Testing)", "sam@example.com")
 			};
 
 			AssertParseAndTryParse (text, encoded, expected);
